@@ -11,14 +11,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-slate-50 font-sans text-black antialiased dark:bg-black dark:text-white",
           inter.variable,
         )}
       >
-        {children}
+          {children}
       </body>
     </html>
   );

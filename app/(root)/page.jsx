@@ -5,13 +5,6 @@ import { getProfileMocks } from "./_components/profile-actions";
 
 export default async function Home() {
 
-  const userResponse = await getUser()
-
-  if(!userResponse.success)
-  {
-    redirect("/login");
-  }
-
   const mocks = await getProfileMocks()
   
   return (

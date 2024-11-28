@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation"
 import { z } from "zod";
+import { createSession } from "@/lib/session";
 
 const registerSchema = z.object({
   email: z
@@ -27,14 +28,6 @@ const registerSchema = z.object({
     path: ["confirmPassword"]
 });
 
-const callRegisterMock = (data) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log("User Registered:", data);
-        resolve({ success: true, message: "User registered successfully!" });
-      }, 2000); 
-    });
-};
 
 export async function registerUser(prevState, formData) {
 
@@ -52,8 +45,29 @@ export async function registerUser(prevState, formData) {
   }
 
   try {
-    await callRegisterMock(res.data);
+      const response = await fetch("http://24.199.121.110/api/auth/register", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify(res.data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.warn(errorData);
+        return {
+          errors: {system: {_errors: [errorData.error]}},
+          success: false,
+          data: data
+        }
+      }
+
+      const { token } = await response.json();
+
+      createSession(token);
   } catch (error) {
+    console.error(error);
     return {
       errors: {system: {_errors: ["An unexpected error occurred. Please try again later or contact support if the problem persists."]}},
       success: false,

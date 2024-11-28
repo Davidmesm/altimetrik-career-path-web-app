@@ -31,7 +31,13 @@ export default function LoginForm() {
             autoCorrect="off"
             name="email"
             placeholder="your-email@altimetrik.com"
+            defaultValue={state.data.email}
           />
+          {state.errors?.email && (
+            <Label variant="error">
+              {state.errors.email._errors[0]}
+            </Label>
+          )}
         </div>
         <div className="flex flex-col space-y-1.5 gap-1">
           <Label htmlFor="password">Password</Label>
@@ -43,6 +49,11 @@ export default function LoginForm() {
             name="password"
             placeholder="•••••••••••"
           />
+          {state.errors?.email && (
+            <Label variant="error">
+              {state.errors.password._errors[0]}
+            </Label>
+          )}
         </div>
       </div>
       <div className="flex w-full justify-center pt-6 pb-2">

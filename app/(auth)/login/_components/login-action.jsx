@@ -1,5 +1,6 @@
 "use server"
 
+import { createSession } from "@/lib/session";
 import { redirect } from "next/navigation"
 import { z } from "zod";
 
@@ -13,14 +14,6 @@ const loginSchema = z.object({
     .min(1, "Password is required")
 })
 
-const callLoginMock = (data) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log("Login:", data.email);
-        resolve({ success: true, message: "User logged in successfully!" });
-      }, 2000); 
-    });
-};
 
 export async function signIn(prevState, formData) {
 
@@ -38,14 +31,36 @@ export async function signIn(prevState, formData) {
   }
 
   try {
-    await callLoginMock(res.data);
+    const response = await fetch("http://24.199.121.110/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(res.data),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.warn(errorData);
+      return {
+        errors: {system: {_errors: [errorData.error]}},
+        success: false,
+        data: data
+      }
+    }
+    
+    const { token } = await response.json();
+    
+    createSession(token);
   } catch (error) {
+    console.error(error);
     return {
       errors: {system: {_errors: ["An unexpected error occurred. Please try again later or contact support if the problem persists."]}},
       success: false,
       data: data
     }
   }
- 
+      
+     
   redirect("/")
 }

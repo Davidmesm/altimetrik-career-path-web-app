@@ -9,7 +9,7 @@ export const metadata = {
   description: "AI-Driven Career Path Navigator for Software Engineers",
 };
 
-export default function RootLayout({ children }) {
+export default function Layout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
